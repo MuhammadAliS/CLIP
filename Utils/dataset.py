@@ -19,10 +19,16 @@ Note: Class must be in int format. Eg: 0, 1, 2 etc.
 import os
 import random
 
+import clip
+from PIL import Image
+
 import torch
 from torchvision.transforms import v2
 from torch.utils.data import Dataset, DataLoader
 from torchvision.io import read_image, ImageReadMode
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model, preprocess = clip.load("ViT-B/32", device=device)
 
 class CustomDataset(Dataset):
     '''
@@ -33,15 +39,12 @@ class CustomDataset(Dataset):
     def __init__(self, parent_dir):
         self.parent_dir = parent_dir
         self.data = []
-        self.transforms = v2.Compose(
-            [v2.RandomResizedCrop(size=(28,28), antialias=True),
-            v2.RandomHorizontalFlip(p=0.5),
-            v2.ToDtype(torch.float32, scale=True),
-            v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]
-        )
-
-    def __len__(self):
-
+        # self.transforms = v2.Compose(
+        #     [v2.RandomResizedCrop(size=(32,32), antialias=True),
+        #     v2.RandomHorizontalFlip(p=0.5),
+        #     v2.ToDtype(torch.float32, scale=True),
+        #     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]
+        # )
         counter = 0
         for class_dir in os.listdir(self.parent_dir):
             f_path = os.path.join(self.parent_dir, class_dir)
@@ -52,15 +55,16 @@ class CustomDataset(Dataset):
                                   int(class_dir)))
                 counter+=1
 
-        random.shuffle(self.data)   
-        return counter
+        random.shuffle(self.data)
+        self.dataset_length = counter
+
+    def __len__(self):
+        return self.dataset_length
     
     def __getitem__(self, index):
         record = self.data[index]
 
-        img = self.transforms(read_image(record[0], 
-                                         mode = ImageReadMode.UNCHANGED))
-
+        img = preprocess(Image.open(record[0]))
         text = record[1]
         label = record[2]
 
