@@ -424,7 +424,8 @@ def build_model(state_dict: dict):
     model = CLIP(
         embed_dim,
         image_resolution, vision_layers, vision_width, vision_patch_size,
-        context_length, vocab_size, transformer_width, transformer_heads, transformer_layers
+        context_length, vocab_size, transformer_width, transformer_heads, 
+        transformer_layers
     )
 
     for key in ["input_resolution", "context_length", "vocab_size"]:

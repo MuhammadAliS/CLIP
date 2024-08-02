@@ -19,13 +19,10 @@ Note: Class must be in int format. Eg: 0, 1, 2 etc.
 import os
 import random
 
+import torch
 import clip
 from PIL import Image
-
-import torch
-from torchvision.transforms import v2
-from torch.utils.data import Dataset, DataLoader
-from torchvision.io import read_image, ImageReadMode
+from torch.utils.data import Dataset
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load("ViT-B/32", device=device)
