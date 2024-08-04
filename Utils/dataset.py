@@ -20,12 +20,8 @@ import os
 import random
 
 import torch
-import clip
 from PIL import Image
 from torch.utils.data import Dataset
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model, preprocess = clip.load("ViT-B/32", device=device)
 
 class CustomDataset(Dataset):
     '''
@@ -33,9 +29,11 @@ class CustomDataset(Dataset):
     DatasetObject[Index] Output
         -> (Image, Text, Class)
     '''
-    def __init__(self, parent_dir):
+    def __init__(self, parent_dir, preprocess):
         self.parent_dir = parent_dir
         self.data = []
+        self.preprocess = preprocess
+
         counter = 0
         for class_dir in os.listdir(self.parent_dir):
             f_path = os.path.join(self.parent_dir, class_dir)
@@ -55,7 +53,7 @@ class CustomDataset(Dataset):
     def __getitem__(self, index):
         record = self.data[index]
 
-        img = preprocess(Image.open(record[0]))
+        img = self.preprocess(Image.open(record[0]))
         text = record[1]
         label = record[2]
 
