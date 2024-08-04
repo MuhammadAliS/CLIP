@@ -13,7 +13,7 @@ Directory format,
             ...
         ...
 
-Note: Class must be in int format. Eg: 0, 1, 2 etc.
+Note: Class must be a name, Eg: Cat, Dot etc.
 '''
 
 import os
@@ -35,13 +35,13 @@ class CustomDataset(Dataset):
         self.preprocess = preprocess
 
         counter = 0
-        for class_dir in os.listdir(self.parent_dir):
+        for idx, class_dir in enumerate(os.listdir(self.parent_dir)):
             f_path = os.path.join(self.parent_dir, class_dir)
-            text = f'Image of number {int(class_dir)}'
+            text = f'An image of number a {class_dir}'
             for _ in os.listdir(f_path):
                 self.data.append((os.path.join(f_path,_),
                                   text,
-                                  int(class_dir)))
+                                  idx))
                 counter+=1
 
         random.shuffle(self.data)
