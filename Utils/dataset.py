@@ -29,32 +29,25 @@ class CustomDataset(Dataset):
     DatasetObject[Index] Output
         -> (Image, Text, Class)
     '''
-    def __init__(self, parent_dir, preprocess):
+    def __init__(self, parent_dir):
         self.parent_dir = parent_dir
         self.data = []
-        self.preprocess = preprocess
 
-        counter = 0
-        for idx, class_dir in enumerate(os.listdir(self.parent_dir)):
-            f_path = os.path.join(self.parent_dir, class_dir)
-            text = f'An image of number a {class_dir}'
-            for _ in os.listdir(f_path):
-                self.data.append((os.path.join(f_path,_),
-                                  text,
-                                  idx))
-                counter+=1
+        self.data.extend(
+            (os.path.join(self.parent_dir, class_dir, file), f'An image of a {class_dir}.')
+            for class_dir in os.listdir(self.parent_dir)
+            for file in os.listdir(os.path.join(self.parent_dir, class_dir))
+        )
 
         random.shuffle(self.data)
-        self.dataset_length = counter
 
     def __len__(self):
-        return self.dataset_length
+        return len(self.data)
     
     def __getitem__(self, index):
         record = self.data[index]
 
-        img = self.preprocess(Image.open(record[0]))
+        img = record[0]
         text = record[1]
-        label = record[2]
 
-        return img, text, label
+        return img, text

@@ -12,15 +12,6 @@ CLIP (Contrastive Language-Image Pre-training) is a powerful model developed by 
 - **Visual Search**: Implement visual search functionality by leveraging CLIP's image and text embeddings.
 - **Visual Question Answering (VQA)**: Extend CLIP to answer questions about images.
 
-## Installation
-
-To get started, clone this repository and install the required dependencies:
-
-```bash
-git clone https://github.com/yourusername/clip-fine-tuning.git
-cd clip-fine-tuning
-pip install -r requirements.txt
-```
 
 ## Usage
 
